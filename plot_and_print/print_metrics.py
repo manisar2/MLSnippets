@@ -1,3 +1,8 @@
+# Author        : manisar (manisar2 on github)
+# License       : MIT License
+# Location      : https://github.com/manisar2/MLSnippets/blob/main/plot_and_print/print_metrics.py
+# Description   : Check https://github.com/manisar2/MLSnippets/tree/main/plot_and_print
+
 # Note: For displaying the HTML table in IPython, I use the git package ipyccmd that can be installed as:
     # pip install git+https://github.com/manisar2/ipyccmd.git
     # This is used at only couple of places - in the end.
@@ -28,8 +33,8 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
         test data.
     ds_test: Dataset
         Provide this (or X_test, y_test below) if you want to see test metrics.
-    X_test : Tensor
-    y_test : Tensor
+    X_test : Any data iterator that your model will accept
+    y_test : Any data iterator that your model will accept
     prev_hist : pandas DataFrame (e.g. read from a csv file)
     prev_model : Model
         Provide this for evaluating test data and comparing against the results from new model.
