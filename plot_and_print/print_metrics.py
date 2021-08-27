@@ -16,7 +16,7 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
                   prev_hist=None, prev_model=None, prev_epochs="", 
                   metric_names=None, ret_metrics=True):
     """
-    Print color-coded TensorFlow metrics in IPython for Training, Validation and Test data or datasets in tabular \
+    Print color-coded TensorFlow metrics for Training, Validation and Test datasets in tabular \
     format, comparing those with the another (previous, e.g.) metrics (if any).
 
     Note: If using TensorFlow's CSVLogger for saving and loading previous history, be aware \
@@ -70,7 +70,7 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
                 if validation_present and prev_hist.get(val_metric) is not None:
                     prev_tr_val_metrics[val_metric] = round(prev_hist[val_metric].iat[-1], 10)
                     if "accuracy" in metric: prev_tr_val_metrics[val_metric] = f"{100*prev_tr_val_metrics[val_metric]:.2f}%"
-    
+
     # Previous test metrics
     prev_eval_metrics = []
     if prev_model and is_test_data_available:
@@ -79,7 +79,7 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
         for metric in metric_names:
             model_metric_names = prev_model.metrics_names
             indx = model_metric_names.index(metric) if metric in model_metric_names else -1
-            if indx != -1: 
+            if indx != -1:
                 prev_te_metrics[metric] = round(prev_eval_metrics[indx], 10)
                 if "accuracy" in metric: 
                     prev_te_metrics[metric] = f"{100*prev_te_metrics[metric]:.2f}%"
@@ -87,7 +87,7 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
 
     # Current training metrics
     curr_lr = f"{model.optimizer.lr.numpy():.10f}"
-    if history is not None:
+    if history:
         # if "lr" in history.keys(): prev_lr = f"{history['lr'].iat[-1]:.10f}"
         for metric in metric_names:
             val_metric = "val_" + metric
@@ -115,14 +115,14 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
     else: metrics = [None] * len(metric_names) # to be used for returning if needed
     ################################################################################
 
-    # Adjusting extra metrics from prev_hist (if metrics changed)
+    # Adjusting extra metrics from prev_hist (if metrics changed or curr history is empty)
     if prev_hist is not None:
         prev_tr_keys = set(prev_hist.keys())
         curr_tr_keys = set(curr_tr_metrics.keys())
         extra_prev_tr_keys = prev_tr_keys - curr_tr_keys
         for key in extra_prev_tr_keys:
             if key.startswith("val_"): continue
-            metric_names.append(key)
+            if key not in metric_names: metric_names.append(key)
             prev_tr_metrics[key] = round(prev_hist[key].iat[-1], 10)
             if "accuracy" in key: prev_tr_metrics[key] = f"{100*prev_tr_metrics[key]:.2f}%"
             curr_tr_metrics[key] = ""
@@ -213,9 +213,9 @@ def print_metrics(history, epochs, model=None, *, ds_test=None, X_test=None, y_t
         <tr{bstring}><td>{metric.replace("_", " ").title()}</td><td>{prev_te_metrics[metric]}</td>
             <td{tdstyle}>{curr_te_metrics[metric]}</td></tr>"""    
 
-    MetricsTable = thtml + "</tbody></table>"
-    MetricsTable.md(DisplayType.HTML) # md() is from a git package ipyccmd (see the Note at the top)
-    "---".md()
+    Metrics_Table = thtml + "</tbody></table>"
+    Metrics_Table.md(DisplayType.HTML)
+    "---".md() # md() is from a git package ipyccmd (see the Note at the top)
     if ret_metrics: return dict(zip(metric_names, metrics))
     # zip will automatically exclude items appended to metric_names later (from prev_hist exclusively)
     ############################################################################
